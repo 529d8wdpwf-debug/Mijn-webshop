@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mijn webshop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    header {
+      background: #222;
+      color: white;
+      padding: 24px 16px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 16px;
+    }
+
+    .producten {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .product {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Mijn webshop</h1>
+    <p>Welkom in mijn winkel!</p>
+  </header>
+
+  <main>
+    <h2>Onze producten</h2>
+    <div id="producten" class="producten">
+      Producten worden geladen...
+    </div>
+  </main>
+</body>
+</html>
