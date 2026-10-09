@@ -16,26 +16,45 @@
     header {
       background: #222;
       color: white;
-      padding: 24px 16px;
       text-align: center;
+      padding: 28px 16px;
     }
 
     main {
-      max-width: 900px;
-      margin: 24px auto;
+      max-width: 1000px;
+      margin: 25px auto;
       padding: 16px;
     }
 
-    .producten {
+    #producten {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
     }
 
     .product {
       background: white;
-      padding: 20px;
       border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px #0001;
+    }
+
+    .product img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .prijs {
+      font-weight: bold;
+      font-size: 1.15rem;
+    }
+
+    .melding {
+      padding: 16px;
+      background: white;
+      border-radius: 8px;
     }
   </style>
 </head>
@@ -47,9 +66,74 @@
 
   <main>
     <h2>Onze producten</h2>
-    <div id="producten" class="producten">
-      Producten worden geladen...
+    <div id="producten">
+      <p class="melding">Producten laden...</p>
     </div>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    async function laadProducten() {
+      const lijst = document.getElementById("producten");
+
+      try {
+        const { data, error } = await db
+          .from("products")
+          .select("id, name, description, price, image_url")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        lijst.replaceChildren();
+
+        if (!data || data.length === 0) {
+          lijst.innerHTML = "<p class='melding'>Er zijn nog geen producten. Kom later terug!</p>";
+          return;
+        }
+
+        data.forEach(product => {
+          const kaart = document.createElement("article");
+          kaart.className = "product";
+
+          if (product.image_url) {
+            const img = document.createElement("img");
+            img.src = product.image_url;
+            img.alt = product.name;
+            img.loading = "lazy";
+            kaart.appendChild(img);
+          }
+
+          const naam = document.createElement("h3");
+          naam.textContent = product.name;
+          kaart.appendChild(naam);
+
+          const beschrijving = document.createElement("p");
+          beschrijving.textContent = product.description || "";
+          kaart.appendChild(beschrijving);
+
+          const prijs = document.createElement("p");
+          prijs.className = "prijs";
+          prijs.textContent = Number(product.price).toLocaleString("nl-BE", {
+            style: "currency",
+            currency: "EUR"
+          });
+          kaart.appendChild(prijs);
+
+          lijst.appendChild(kaart);
+        });
+      } catch (error) {
+        console.error(error);
+        lijst.replaceChildren();
+
+        const melding = document.createElement("p");
+        melding.className = "melding";
+        melding.textContent = "De producten konden niet worden geladen. Controleer later de Supabase-instellingen.";
+        lijst.appendChild(melding);
+      }
+    }
+
+    laadProducten();
+  </script>
 </body>
 </html>
